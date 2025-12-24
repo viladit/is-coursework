@@ -59,6 +59,9 @@ CREATE TABLE IF NOT EXISTS fridges (
                                        owner_id BIGINT REFERENCES users(user_id) ON DELETE SET NULL
 )@@
 
+ALTER TABLE fridges
+    ADD COLUMN IF NOT EXISTS owner_id BIGINT REFERENCES users(user_id) ON DELETE SET NULL@@
+
 CREATE TABLE IF NOT EXISTS fridge_memberships (
                                                   fridge_id BIGINT NOT NULL REFERENCES fridges(fridge_id) ON DELETE CASCADE,
                                                   user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
