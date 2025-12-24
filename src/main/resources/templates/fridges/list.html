@@ -3,7 +3,7 @@
 <body th:replace="~{layout :: content(~{::section})}">
 <section>
     <div class="d-flex justify-content-between align-items-center">
-        <h4>Холодильники</h4>
+        <h4 class="page-title">Холодильники</h4>
     </div>
 
     <div class="card mt-3">
@@ -24,7 +24,7 @@
                     <td class="text-end">
                         <div class="d-inline-flex gap-2">
                             <form th:action="@{/fridges/{id}/join(id=${f.fridgeId})}" method="post" class="m-0">
-                                <button class="btn btn-outline-primary btn-sm" type="submit">Открыть</button>
+                                <button class="btn btn-outline-primary btn-sm" type="submit">Присоединиться</button>
                             </form>
                             <a class="btn btn-outline-secondary btn-sm"
                                th:href="@{/fridges/{id}/map(id=${f.fridgeId})}">Карта</a>

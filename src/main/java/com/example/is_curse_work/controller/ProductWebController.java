@@ -5,6 +5,7 @@ import com.example.is_curse_work.repository.CategoryRepository;
 import com.example.is_curse_work.repository.FridgeMembershipRepository;
 import com.example.is_curse_work.repository.ZoneRepository;
 import com.example.is_curse_work.security.CustomUserDetails;
+import com.example.is_curse_work.service.FridgeService;
 import com.example.is_curse_work.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,15 +22,18 @@ public class ProductWebController {
     private final CategoryRepository categories;
     private final ZoneRepository zones;
     private final FridgeMembershipRepository memberships;
+    private final FridgeService fridges;
 
     public ProductWebController(ProductService productService,
                                 CategoryRepository categories,
                                 ZoneRepository zones,
-                                FridgeMembershipRepository memberships) {
+                                FridgeMembershipRepository memberships,
+                                FridgeService fridges) {
         this.productService = productService;
         this.categories = categories;
         this.zones = zones;
         this.memberships = memberships;
+        this.fridges = fridges;
     }
 
     @GetMapping("/my")
@@ -46,6 +50,7 @@ public class ProductWebController {
         Long resolvedFridgeId = fridgeId != null ? fridgeId : resolveDefaultFridgeId(me.getUserId());
         model.addAttribute("form", new AddProductForm());
         model.addAttribute("categories", categories.findAll());
+        model.addAttribute("fridges", fridges.listFridges());
         if (resolvedFridgeId != null) {
             model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(resolvedFridgeId));
         } else {
@@ -62,9 +67,13 @@ public class ProductWebController {
                       @RequestParam(name = "fridgeId", required = false) Long fridgeId,
                       Model model) {
         if (br.hasErrors()) {
+            Long resolvedFridgeId = fridgeId != null ? fridgeId : resolveDefaultFridgeId(me.getUserId());
             model.addAttribute("categories", categories.findAll());
-            if (fridgeId != null) model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(fridgeId));
-            model.addAttribute("fridgeId", fridgeId);
+            model.addAttribute("fridges", fridges.listFridges());
+            if (resolvedFridgeId != null) {
+                model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(resolvedFridgeId));
+            }
+            model.addAttribute("fridgeId", resolvedFridgeId);
             return "products/add";
         }
         if (form.getZoneId() != null) {
@@ -72,7 +81,10 @@ public class ProductWebController {
             if (zone == null || !memberships.existsByFridgeIdAndUserIdAndLeftAtIsNull(zone.getFridge().getFridgeId(), me.getUserId())) {
                 model.addAttribute("error", "Вы не состоите в холодильнике выбранной зоны.");
                 model.addAttribute("categories", categories.findAll());
-                if (fridgeId != null) model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(fridgeId));
+                model.addAttribute("fridges", fridges.listFridges());
+                if (fridgeId != null) {
+                    model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(fridgeId));
+                }
                 model.addAttribute("fridgeId", fridgeId);
                 return "products/add";
             }
@@ -83,6 +95,7 @@ public class ProductWebController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("categories", categories.findAll());
+            model.addAttribute("fridges", fridges.listFridges());
             if (fridgeId != null) model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(fridgeId));
             model.addAttribute("fridgeId", fridgeId);
             return "products/add";

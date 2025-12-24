@@ -2,15 +2,35 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <body th:replace="~{layout :: content(~{::section})}">
 <section>
-    <h4>Добавить продукт</h4>
+    <h4 class="page-title">Добавить продукт</h4>
 
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-    <form class="card card-body" th:action="@{/products/add(fridgeId=${fridgeId})}" th:object="${form}" method="post">
-        <div class="alert alert-warning" th:if="${fridgeId == null}">
-            Сначала присоединитесь к холодильнику, чтобы добавить продукт.
-            <a th:href="@{/fridges}">Перейти к списку холодильников</a>.
+    <div class="alert alert-warning" th:if="${fridgeId == null}">
+        Сначала присоединитесь к холодильнику, чтобы добавить продукт.
+        <a th:href="@{/fridges}">Перейти к списку холодильников</a>.
+    </div>
+
+    <div class="card mb-3" th:if="${fridgeId == null}">
+        <div class="card-header">Доступные холодильники</div>
+        <div class="card-body">
+            <div class="text-muted" th:if="${#lists.isEmpty(fridges)}">Пока нет холодильников.</div>
+            <div class="d-grid gap-2" th:if="${!#lists.isEmpty(fridges)}">
+                <div class="d-flex justify-content-between align-items-center p-2 border rounded-3"
+                     th:each="f : ${fridges}">
+                    <div>
+                        <div class="fw-semibold" th:text="${f.name}">Fridge</div>
+                        <div class="text-muted small" th:text="${f.location}">Location</div>
+                    </div>
+                    <form th:action="@{/fridges/{id}/join(id=${f.fridgeId})}" method="post" class="m-0">
+                        <button class="btn btn-outline-primary btn-sm" type="submit">Присоединиться</button>
+                    </form>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <form class="card card-body" th:action="@{/products/add(fridgeId=${fridgeId})}" th:object="${form}" method="post">
         <div class="mb-2">
             <label class="form-label">Название</label>
             <input class="form-control" th:field="*{name}">

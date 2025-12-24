@@ -3,7 +3,7 @@
 <body th:replace="~{layout :: content(~{::section})}">
 <section>
     <div class="d-flex justify-content-between align-items-center">
-        <h4>Мои продукты</h4>
+        <h4 class="page-title">Мои продукты</h4>
         <a class="btn btn-success btn-sm"
            th:if="${defaultFridgeId != null}"
            th:href="@{/products/add(fridgeId=${defaultFridgeId})}">+ Добавить</a>

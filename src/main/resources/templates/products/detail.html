@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <body th:replace="~{layout :: content(~{::section})}">
 <section>
-    <h4 th:text="'Продукт #' + ${p.productId()}"></h4>
+    <h4 class="page-title" th:text="'Продукт #' + ${p.productId()}"></h4>
 
     <div class="card card-body mb-3">
         <div><b>Название:</b> <span th:text="${p.name()}"></span></div>

@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <body th:replace="~{layout :: content(~{::section})}">
 <section>
-    <h4 th:text="'Участники холодильника #' + ${fridgeId}"></h4>
+    <h4 class="page-title" th:text="'Участники холодильника #' + ${fridgeId}"></h4>
 
     <table class="table table-sm table-striped mt-3">
         <thead>
