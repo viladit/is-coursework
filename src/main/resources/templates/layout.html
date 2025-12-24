@@ -27,7 +27,7 @@
 <!--</html>-->
 
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="layout(content)">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -44,6 +44,8 @@
         <div class="d-flex gap-2 align-items-center">
             <a class="btn btn-outline-primary btn-sm" th:href="@{/products/my}">Мои продукты</a>
             <a class="btn btn-outline-primary btn-sm" th:href="@{/fridges}">Холодильники</a>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/moderator}" sec:authorize="hasRole('MODERATOR') or hasRole('ADMIN')">Модератор</a>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">Админка</a>
             <form th:action="@{/logout}" method="post" class="m-0">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <button class="btn btn-soft btn-sm" type="submit">Выйти</button>

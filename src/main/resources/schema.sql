@@ -121,6 +121,16 @@ CREATE TABLE IF NOT EXISTS notifications (
                                              error_msg TEXT
 )@@
 
+CREATE TABLE IF NOT EXISTS audit_logs (
+                                          audit_id BIGSERIAL PRIMARY KEY,
+                                          actor_email TEXT,
+                                          action TEXT NOT NULL,
+                                          entity_type TEXT NOT NULL,
+                                          entity_id TEXT,
+                                          details TEXT,
+                                          created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+)@@
+
 
 -- ======================= INDEXES ========================
 CREATE INDEX IF NOT EXISTS idx_products_expires_at ON products (expires_at)@@
@@ -131,6 +141,7 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_sentat ON notifications (user_
 CREATE INDEX IF NOT EXISTS idx_product_history_product_created_at ON product_history (product_id, created_at DESC)@@
 CREATE INDEX IF NOT EXISTS idx_zones_fridge ON zones(fridge_id)@@
 CREATE INDEX IF NOT EXISTS idx_fridge_memberships_user ON fridge_memberships(user_id)@@
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at)@@
 
 
 -- ======================= TRIGGERS ========================

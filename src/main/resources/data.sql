@@ -8,20 +8,28 @@ ON CONFLICT (code) DO NOTHING@@
 INSERT INTO users (email,password_hash,name,room,notif_email_on,notif_push_on)
 VALUES
     ('alice@example.com','$2a$10$9pQvG7yYlXl7u6Qy1cG3uO8t7o9xC0P9oGzQqE9b6GmY7G3tqfQK2','Alice','101', TRUE, TRUE),
-    ('bob@example.com','$2a$10$9pQvG7yYlXl7u6Qy1cG3uO8t7o9xC0P9oGzQqE9b6GmY7G3tqfQK2','Bob','102', TRUE, FALSE)
+    ('bob@example.com','$2a$10$9pQvG7yYlXl7u6Qy1cG3uO8t7o9xC0P9oGzQqE9b6GmY7G3tqfQK2','Bob','102', TRUE, FALSE),
+    ('vlad@gmail.com','$2a$10$9pQvG7yYlXl7u6Qy1cG3uO8t7o9xC0P9oGzQqE9b6GmY7G3tqfQK2','Vlad','201', TRUE, TRUE)
 ON CONFLICT (email) DO NOTHING@@
 
 INSERT INTO user_roles (user_id, role_id)
 SELECT u.user_id, r.role_id
 FROM users u
 JOIN roles r ON r.code = 'ADMIN'
-WHERE u.email = 'alice@example.com'
+WHERE u.email IN ('alice@example.com', 'vlad@gmail.com')
 ON CONFLICT DO NOTHING@@
 
 INSERT INTO user_roles (user_id, role_id)
 SELECT u.user_id, r.role_id
 FROM users u
 JOIN roles r ON r.code = 'USER'
+WHERE u.email = 'bob@example.com'
+ON CONFLICT DO NOTHING@@
+
+INSERT INTO user_roles (user_id, role_id)
+SELECT u.user_id, r.role_id
+FROM users u
+JOIN roles r ON r.code = 'MODERATOR'
 WHERE u.email = 'bob@example.com'
 ON CONFLICT DO NOTHING@@
 
