@@ -16,6 +16,7 @@
             <div class="card card-body">
                 <h6>Переместить</h6>
                 <form th:action="@{/products/{id}/move(id=${p.productId()})}" method="post" th:object="${moveForm}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <input class="form-control form-control-sm mb-2" th:field="*{toZoneId}" placeholder="toZoneId">
                     <input class="form-control form-control-sm mb-2" th:field="*{comment}" placeholder="комментарий">
                     <button class="btn btn-sm btn-primary" type="submit">MOVE</button>
@@ -27,6 +28,7 @@
             <div class="card card-body">
                 <h6>Продлить срок</h6>
                 <form th:action="@{/products/{id}/extend(id=${p.productId()})}" method="post" th:object="${extendForm}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <input class="form-control form-control-sm mb-2" th:field="*{newExpiresAt}" placeholder="2026-01-10T12:00:00+01:00">
                     <input class="form-control form-control-sm mb-2" th:field="*{comment}" placeholder="обоснование">
                     <button class="btn btn-sm btn-warning" type="submit">EXTEND</button>
@@ -38,6 +40,7 @@
             <div class="card card-body">
                 <h6>Статус</h6>
                 <form th:action="@{/products/{id}/status(id=${p.productId()})}" method="post" th:object="${statusForm}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <select class="form-select form-select-sm mb-2" th:field="*{status}">
                         <option value="EATEN">EATEN</option>
                         <option value="TAKEN">TAKEN</option>

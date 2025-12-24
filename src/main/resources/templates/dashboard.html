@@ -154,6 +154,7 @@
                     <hr/>
 
                     <form th:action="@{/notifications/run}" method="post" class="row g-2">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <div class="col-6">
                             <input class="form-control form-control-sm" name="fridgeId" placeholder="fridgeId" value="1">
                         </div>

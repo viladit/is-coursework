@@ -16,6 +16,7 @@
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
     <form class="card card-body auth-card" th:action="@{/register}" th:object="${form}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class="mb-2">
             <label class="form-label">Email</label>
             <input class="form-control" th:field="*{email}" type="email"/>
