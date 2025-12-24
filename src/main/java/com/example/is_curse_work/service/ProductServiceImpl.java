@@ -9,6 +9,8 @@ import com.example.is_curse_work.repository.function.ProductFunctionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -30,14 +32,19 @@ public class ProductServiceImpl implements ProductService {
         if (form.getZoneId() == null) throw new IllegalArgumentException("Zone is required");
         if (form.getName() == null || form.getName().isBlank()) throw new IllegalArgumentException("Name is required");
 
+        OffsetDateTime expiresAt = null;
+        if (form.getExpiresAt() != null) {
+            expiresAt = form.getExpiresAt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        }
+
         return productFn.addProduct(
                 userId,
                 form.getZoneId(),
                 form.getCategoryId(),
                 form.getName(),
                 form.getBarcode(),
-                form.getExpiresAt(),
-                form.isLocked()
+                expiresAt,
+                false
         );
     }
 
@@ -74,4 +81,3 @@ public class ProductServiceImpl implements ProductService {
         productFn.setStatus(productId, form.getStatus(), requesterId, form.getComment());
     }
 }
-

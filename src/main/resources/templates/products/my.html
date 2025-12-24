@@ -14,7 +14,7 @@
     <div class="card mt-3">
         <div class="card-body p-0">
             <div class="text-muted p-3" th:if="${#lists.isEmpty(products)}">Список пуст</div>
-            <table class="table table-sm table-striped mb-0" th:if="${!#lists.isEmpty(products)}">
+            <table class="table table-sm table-striped table-hover align-middle mb-0" th:if="${!#lists.isEmpty(products)}">
                 <thead>
                 <tr>
                     <th>Название</th>
@@ -26,7 +26,11 @@
                 <tbody>
                 <tr th:each="p : ${products}">
                     <td th:text="${p.name()}"></td>
-                    <td th:text="${p.expiresAt()}"></td>
+                    <td>
+                        <span th:if="${p.expiresAt() != null}"
+                              th:text="${#temporals.format(p.expiresAt(), 'dd.MM.yyyy HH:mm')}"></span>
+                        <span th:if="${p.expiresAt() == null}" class="text-muted">—</span>
+                    </td>
                     <td><span class="badge bg-secondary" th:text="${p.status()}"></span></td>
                     <td class="text-end"><a th:href="@{/products/{id}(id=${p.productId()})}">Открыть</a></td>
                 </tr>
