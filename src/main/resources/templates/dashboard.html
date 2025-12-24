@@ -62,9 +62,7 @@
 <!--</html>-->
 
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<body th:replace="~{layout :: content(~{::section})}">
-
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
 <section>
     <h4 class="page-title mb-3">Dashboard</h4>
 
@@ -173,6 +171,4 @@
         </div>
     </div>
 </section>
-
-</body>
 </html>

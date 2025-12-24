@@ -27,7 +27,7 @@
 <!--</html>-->
 
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -52,8 +52,8 @@
 </nav>
 
 <!-- Главный layout-фрагмент: принимает "body" и вставляет его внутрь контейнера -->
-<main class="container-lg my-4" th:fragment="content(body)">
-    <div class="page-surface p-4 p-md-5" th:replace="${body}"></div>
+<main class="container-lg my-4">
+    <div class="page-surface p-4 p-md-5" th:replace="${content}"></div>
 </main>
 
 <footer class="app-footer py-4">

@@ -38,6 +38,9 @@ public class FridgeServiceImpl implements FridgeService {
     @Override
     @Transactional
     public void joinFridge(Long fridgeId, Long userId) {
+        if (memberships.existsByFridgeIdAndUserIdAndLeftAtIsNull(fridgeId, userId)) {
+            return;
+        }
         membershipFn.addMember(fridgeId, userId, false);
     }
 
@@ -57,4 +60,3 @@ public class FridgeServiceImpl implements FridgeService {
         membershipFn.removeMember(fridgeId, userId);
     }
 }
-
