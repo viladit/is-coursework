@@ -44,6 +44,7 @@ public class AdminFridgesController {
         fridge.setName(form.getName());
         fridge.setLocation(form.getLocation());
         fridge.setInviteRequired(form.isInviteRequired());
+        fridge.setOwnerId(actor.getUserId());
         Fridge saved = fridges.save(fridge);
         audit.log(actor.getUsername(), "CREATE_FRIDGE", "Fridge", saved.getFridgeId().toString(), saved.getName());
         return "redirect:/admin/fridges";

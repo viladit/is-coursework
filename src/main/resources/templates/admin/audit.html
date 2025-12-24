@@ -26,7 +26,8 @@
 
     <div class="card">
         <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
+            <div class="text-muted p-3" th:if="${#lists.isEmpty(logs)}">Нет записей</div>
+            <table class="table table-hover align-middle mb-0" th:if="${!#lists.isEmpty(logs)}">
                 <thead>
                 <tr>
                     <th>Дата</th>

@@ -36,10 +36,10 @@ public class AdminProductsController {
     @GetMapping
     public String list(@ModelAttribute("filter") AdminProductFilter filter, Model model) {
         model.addAttribute("fridges", fridges.findAll());
-        model.addAttribute("products",
-                products.searchAdmin(normalize(filter.getOwnerEmail()),
-                        normalize(filter.getStatus()),
-                        filter.getFridgeId()));
+        var items = products.searchAdmin(normalize(filter.getOwnerEmail()),
+                normalize(filter.getStatus()),
+                filter.getFridgeId());
+        model.addAttribute("products", items == null ? java.util.List.of() : items);
         model.addAttribute("statusForm", new SetStatusForm());
         return "admin/products";
     }

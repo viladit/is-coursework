@@ -55,7 +55,8 @@ CREATE TABLE IF NOT EXISTS fridges (
                                        name TEXT NOT NULL,
                                        location TEXT,
                                        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-                                       invite_required BOOLEAN NOT NULL DEFAULT FALSE
+                                       invite_required BOOLEAN NOT NULL DEFAULT FALSE,
+                                       owner_id BIGINT REFERENCES users(user_id) ON DELETE SET NULL
 )@@
 
 CREATE TABLE IF NOT EXISTS fridge_memberships (

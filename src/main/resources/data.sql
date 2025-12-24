@@ -33,8 +33,9 @@ JOIN roles r ON r.code = 'MODERATOR'
 WHERE u.email = 'bob@example.com'
 ON CONFLICT DO NOTHING@@
 
-INSERT INTO fridges (name, location, invite_required)
-SELECT 'Kitchen Fridge', 'Apartment 1, Kitchen', FALSE
+INSERT INTO fridges (name, location, invite_required, owner_id)
+SELECT 'Kitchen Fridge', 'Apartment 1, Kitchen', FALSE,
+       (SELECT user_id FROM users WHERE email = 'alice@example.com' LIMIT 1)
 WHERE NOT EXISTS (
     SELECT 1 FROM fridges WHERE name = 'Kitchen Fridge' AND location = 'Apartment 1, Kitchen'
 )@@

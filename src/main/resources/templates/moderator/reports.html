@@ -28,7 +28,8 @@
     <div class="card">
         <div class="card-header">Топ зон по продуктам</div>
         <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
+            <div class="text-muted p-3" th:if="${#lists.isEmpty(summary.topZones)}">Нет данных</div>
+            <table class="table table-hover align-middle mb-0" th:if="${!#lists.isEmpty(summary.topZones)}">
                 <thead>
                 <tr>
                     <th>Зона</th>

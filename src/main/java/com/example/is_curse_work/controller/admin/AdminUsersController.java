@@ -8,6 +8,7 @@ import com.example.is_curse_work.service.AuditService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -33,8 +34,14 @@ public class AdminUsersController {
     }
 
     @PostMapping("/{id}/block")
-    public String block(@AuthenticationPrincipal CustomUserDetails actor, @PathVariable("id") Long id) {
-        var user = users.findById(id).orElseThrow();
+    public String block(@AuthenticationPrincipal CustomUserDetails actor,
+                        @PathVariable("id") Long id,
+                        RedirectAttributes redirectAttributes) {
+        var user = users.findById(id).orElse(null);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
+            return "redirect:/admin/users";
+        }
         user.setBlockedAt(OffsetDateTime.now());
         users.save(user);
         audit.log(actor.getUsername(), "BLOCK_USER", "User", id.toString(), "Blocked user");
@@ -42,8 +49,14 @@ public class AdminUsersController {
     }
 
     @PostMapping("/{id}/unblock")
-    public String unblock(@AuthenticationPrincipal CustomUserDetails actor, @PathVariable("id") Long id) {
-        var user = users.findById(id).orElseThrow();
+    public String unblock(@AuthenticationPrincipal CustomUserDetails actor,
+                          @PathVariable("id") Long id,
+                          RedirectAttributes redirectAttributes) {
+        var user = users.findById(id).orElse(null);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
+            return "redirect:/admin/users";
+        }
         user.setBlockedAt(null);
         users.save(user);
         audit.log(actor.getUsername(), "UNBLOCK_USER", "User", id.toString(), "Unblocked user");
@@ -53,28 +66,42 @@ public class AdminUsersController {
     @PostMapping("/{id}/roles/{code}/grant")
     public String grantRole(@AuthenticationPrincipal CustomUserDetails actor,
                             @PathVariable("id") Long id,
-                            @PathVariable("code") String code) {
-        var user = users.findById(id).orElseThrow();
-        Role role = roles.findByCode(code.toUpperCase());
-        if (role != null) {
-            user.getRoles().add(role);
-            users.save(user);
-            audit.log(actor.getUsername(), "GRANT_ROLE", "User", id.toString(), "Granted " + code);
+                            @PathVariable("code") String code,
+                            RedirectAttributes redirectAttributes) {
+        var user = users.findById(id).orElse(null);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
+            return "redirect:/admin/users";
         }
+        Role role = roles.findByCode(code.toUpperCase());
+        if (role == null) {
+            redirectAttributes.addFlashAttribute("error", "Роль не найдена");
+            return "redirect:/admin/users";
+        }
+        user.getRoles().add(role);
+        users.save(user);
+        audit.log(actor.getUsername(), "GRANT_ROLE", "User", id.toString(), "Granted " + code);
         return "redirect:/admin/users";
     }
 
     @PostMapping("/{id}/roles/{code}/revoke")
     public String revokeRole(@AuthenticationPrincipal CustomUserDetails actor,
                              @PathVariable("id") Long id,
-                             @PathVariable("code") String code) {
-        var user = users.findById(id).orElseThrow();
-        Role role = roles.findByCode(code.toUpperCase());
-        if (role != null) {
-            user.getRoles().remove(role);
-            users.save(user);
-            audit.log(actor.getUsername(), "REVOKE_ROLE", "User", id.toString(), "Revoked " + code);
+                             @PathVariable("code") String code,
+                             RedirectAttributes redirectAttributes) {
+        var user = users.findById(id).orElse(null);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
+            return "redirect:/admin/users";
         }
+        Role role = roles.findByCode(code.toUpperCase());
+        if (role == null) {
+            redirectAttributes.addFlashAttribute("error", "Роль не найдена");
+            return "redirect:/admin/users";
+        }
+        user.getRoles().remove(role);
+        users.save(user);
+        audit.log(actor.getUsername(), "REVOKE_ROLE", "User", id.toString(), "Revoked " + code);
         return "redirect:/admin/users";
     }
 }

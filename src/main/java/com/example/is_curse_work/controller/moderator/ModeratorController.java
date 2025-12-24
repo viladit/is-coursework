@@ -23,7 +23,11 @@ public class ModeratorController {
 
     @GetMapping("/reports")
     public String reports(Model model) {
-        model.addAttribute("summary", reports.buildSummary());
+        var summary = reports.buildSummary();
+        if (summary == null) {
+            summary = new com.example.is_curse_work.dto.ReportSummary(0, 0, java.util.List.of());
+        }
+        model.addAttribute("summary", summary);
         return "moderator/reports";
     }
 }
