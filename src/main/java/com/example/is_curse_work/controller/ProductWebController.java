@@ -2,6 +2,7 @@ package com.example.is_curse_work.controller;
 
 import com.example.is_curse_work.dto.*;
 import com.example.is_curse_work.repository.CategoryRepository;
+import com.example.is_curse_work.repository.FridgeMembershipRepository;
 import com.example.is_curse_work.repository.ZoneRepository;
 import com.example.is_curse_work.security.CustomUserDetails;
 import com.example.is_curse_work.service.ProductService;
@@ -19,25 +20,38 @@ public class ProductWebController {
     private final ProductService productService;
     private final CategoryRepository categories;
     private final ZoneRepository zones;
+    private final FridgeMembershipRepository memberships;
 
-    public ProductWebController(ProductService productService, CategoryRepository categories, ZoneRepository zones) {
+    public ProductWebController(ProductService productService,
+                                CategoryRepository categories,
+                                ZoneRepository zones,
+                                FridgeMembershipRepository memberships) {
         this.productService = productService;
         this.categories = categories;
         this.zones = zones;
+        this.memberships = memberships;
     }
 
     @GetMapping("/my")
     public String my(@AuthenticationPrincipal CustomUserDetails me, Model model) {
         model.addAttribute("products", productService.getMyProducts(me.getUserId()));
+        model.addAttribute("defaultFridgeId", resolveDefaultFridgeId(me.getUserId()));
         return "products/my";
     }
 
     @GetMapping("/add")
-    public String addForm(@RequestParam(name = "fridgeId", required = false) Long fridgeId, Model model) {
+    public String addForm(@AuthenticationPrincipal CustomUserDetails me,
+                          @RequestParam(name = "fridgeId", required = false) Long fridgeId,
+                          Model model) {
+        Long resolvedFridgeId = fridgeId != null ? fridgeId : resolveDefaultFridgeId(me.getUserId());
         model.addAttribute("form", new AddProductForm());
         model.addAttribute("categories", categories.findAll());
-        if (fridgeId != null) model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(fridgeId));
-        model.addAttribute("fridgeId", fridgeId);
+        if (resolvedFridgeId != null) {
+            model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(resolvedFridgeId));
+        } else {
+            model.addAttribute("error", "Сначала присоединитесь к холодильнику.");
+        }
+        model.addAttribute("fridgeId", resolvedFridgeId);
         return "products/add";
     }
 
@@ -52,6 +66,16 @@ public class ProductWebController {
             if (fridgeId != null) model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(fridgeId));
             model.addAttribute("fridgeId", fridgeId);
             return "products/add";
+        }
+        if (form.getZoneId() != null) {
+            var zone = zones.findById(form.getZoneId()).orElse(null);
+            if (zone == null || !memberships.existsByFridgeIdAndUserIdAndLeftAtIsNull(zone.getFridge().getFridgeId(), me.getUserId())) {
+                model.addAttribute("error", "Вы не состоите в холодильнике выбранной зоны.");
+                model.addAttribute("categories", categories.findAll());
+                if (fridgeId != null) model.addAttribute("zones", zones.findByFridge_FridgeIdOrderBySortOrderAsc(fridgeId));
+                model.addAttribute("fridgeId", fridgeId);
+                return "products/add";
+            }
         }
         try {
             productService.addProduct(me.getUserId(), form);
@@ -97,5 +121,11 @@ public class ProductWebController {
         productService.setStatus(me.getUserId(), id, form);
         return "redirect:/products/" + id;
     }
-}
 
+    private Long resolveDefaultFridgeId(Long userId) {
+        return memberships.findByUserIdAndLeftAtIsNull(userId).stream()
+                .findFirst()
+                .map(m -> m.getFridgeId())
+                .orElse(null);
+    }
+}

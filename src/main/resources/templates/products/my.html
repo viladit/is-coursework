@@ -4,7 +4,12 @@
 <section>
     <div class="d-flex justify-content-between align-items-center">
         <h4>Мои продукты</h4>
-        <a class="btn btn-success btn-sm" th:href="@{/products/add(fridgeId=1)}">+ Добавить</a>
+        <a class="btn btn-success btn-sm"
+           th:if="${defaultFridgeId != null}"
+           th:href="@{/products/add(fridgeId=${defaultFridgeId})}">+ Добавить</a>
+        <a class="btn btn-outline-secondary btn-sm"
+           th:if="${defaultFridgeId == null}"
+           th:href="@{/fridges}">Присоединиться к холодильнику</a>
     </div>
 
     <div class="card mt-3">
