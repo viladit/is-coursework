@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
-<div>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<body th:replace="~{layout :: content(~{::section})}">
+<section>
     <h4>Добавить продукт</h4>
 
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
@@ -46,5 +47,6 @@
 
         <button class="btn btn-success" type="submit">Сохранить</button>
     </form>
-</div>
+</section>
+</body>
 </html>

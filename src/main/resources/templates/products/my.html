@@ -1,28 +1,35 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
-<div>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<body th:replace="~{layout :: content(~{::section})}">
+<section>
     <div class="d-flex justify-content-between align-items-center">
         <h4>Мои продукты</h4>
         <a class="btn btn-success btn-sm" th:href="@{/products/add(fridgeId=1)}">+ Добавить</a>
     </div>
 
-    <table class="table table-sm table-striped mt-3">
-        <thead>
-        <tr>
-            <th>Название</th>
-            <th>Срок</th>
-            <th>Статус</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="p : ${products}">
-            <td th:text="${p.name()}"></td>
-            <td th:text="${p.expiresAt()}"></td>
-            <td><span class="badge bg-secondary" th:text="${p.status()}"></span></td>
-            <td><a th:href="@{/products/{id}(id=${p.productId()})}">Открыть</a></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div class="card mt-3">
+        <div class="card-body p-0">
+            <div class="text-muted p-3" th:if="${#lists.isEmpty(products)}">Список пуст</div>
+            <table class="table table-sm table-striped mb-0" th:if="${!#lists.isEmpty(products)}">
+                <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Срок</th>
+                    <th>Статус</th>
+                    <th class="text-end"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${products}">
+                    <td th:text="${p.name()}"></td>
+                    <td th:text="${p.expiresAt()}"></td>
+                    <td><span class="badge bg-secondary" th:text="${p.status()}"></span></td>
+                    <td class="text-end"><a th:href="@{/products/{id}(id=${p.productId()})}">Открыть</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
 </html>
