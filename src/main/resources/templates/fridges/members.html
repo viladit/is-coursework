@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<div>
+    <h4 th:text="'Участники холодильника #' + ${fridgeId}"></h4>
+
+    <table class="table table-sm table-striped mt-3">
+        <thead>
+        <tr><th>user_id</th><th>is_moderator</th><th></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${members}">
+            <td th:text="${m.userId}"></td>
+            <td th:text="${m.moderator}"></td>
+            <td>
+                <form th:action="@{/fridges/{id}/members/{uid}/remove(id=${fridgeId},uid=${m.userId})}" method="post">
+                    <button class="btn btn-sm btn-danger" type="submit">Remove</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>

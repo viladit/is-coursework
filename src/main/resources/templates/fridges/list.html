@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<div>
+    <h4>Холодильники</h4>
+    <ul class="list-group mt-3">
+        <li class="list-group-item d-flex justify-content-between align-items-center" th:each="f : ${fridges}">
+            <span><b th:text="${f.name}"></b> <span class="text-muted" th:text="${f.location}"></span></span>
+            <span class="d-flex gap-2">
+        <form th:action="@{/fridges/{id}/join(id=${f.fridgeId})}" method="post">
+          <button class="btn btn-outline-primary btn-sm" type="submit">Join</button>
+        </form>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/fridges/{id}/map(id=${f.fridgeId})}">Map</a>
+        <a class="btn btn-outline-dark btn-sm" th:href="@{/fridges/{id}/members(id=${f.fridgeId})}">Members</a>
+      </span>
+        </li>
+    </ul>
+</div>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<div>
+    <div class="d-flex justify-content-between align-items-center">
+        <h4>Мои продукты</h4>
+        <a class="btn btn-success btn-sm" th:href="@{/products/add(fridgeId=1)}">+ Добавить</a>
+    </div>
+
+    <table class="table table-sm table-striped mt-3">
+        <thead>
+        <tr>
+            <th>Название</th>
+            <th>Срок</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${products}">
+            <td th:text="${p.name()}"></td>
+            <td th:text="${p.expiresAt()}"></td>
+            <td><span class="badge bg-secondary" th:text="${p.status()}"></span></td>
+            <td><a th:href="@{/products/{id}(id=${p.productId()})}">Открыть</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>

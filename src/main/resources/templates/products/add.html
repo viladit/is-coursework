@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<div>
+    <h4>Добавить продукт</h4>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form class="card card-body" th:action="@{/products/add(fridgeId=${fridgeId})}" th:object="${form}" method="post">
+        <div class="mb-2">
+            <label class="form-label">Название</label>
+            <input class="form-control" th:field="*{name}">
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+
+        <div class="mb-2">
+            <label class="form-label">Категория</label>
+            <select class="form-select" th:field="*{categoryId}">
+                <option value="">(не выбрано)</option>
+                <option th:each="c : ${categories}" th:value="${c.categoryId}" th:text="${c.name}"></option>
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label class="form-label">Зона</label>
+            <select class="form-select" th:field="*{zoneId}">
+                <option th:each="z : ${zones}" th:value="${z.zoneId}" th:text="${z.name}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('zoneId')}" th:errors="*{zoneId}"></div>
+        </div>
+
+        <div class="mb-2">
+            <label class="form-label">Штрих-код (опц.)</label>
+            <input class="form-control" th:field="*{barcode}">
+        </div>
+
+        <div class="mb-2">
+            <label class="form-label">Срок годности (опц.)</label>
+            <input class="form-control" th:field="*{expiresAt}" placeholder="2026-01-10T12:00:00+01:00">
+            <div class="form-text">Если не задан — вычислится по категории в БД</div>
+        </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" th:field="*{locked}" type="checkbox">
+            <label class="form-check-label">Locked (“замок”)</label>
+        </div>
+
+        <button class="btn btn-success" type="submit">Сохранить</button>
+    </form>
+</div>
+</html>
