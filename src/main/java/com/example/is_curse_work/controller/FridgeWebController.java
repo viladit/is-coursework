@@ -24,29 +24,34 @@ public class FridgeWebController {
     }
 
     @PostMapping("/{id}/join")
-    public String join(@AuthenticationPrincipal CustomUserDetails me, @PathVariable Long id) {
+    public String join(@AuthenticationPrincipal CustomUserDetails me, @PathVariable("id") Long id) {
+        fridgeService.joinFridge(id, me.getUserId());
+        return "redirect:/fridges/" + id + "/map";
+    }
+
+    @GetMapping("/{id}/join")
+    public String joinGet(@AuthenticationPrincipal CustomUserDetails me, @PathVariable("id") Long id) {
         fridgeService.joinFridge(id, me.getUserId());
         return "redirect:/fridges/" + id + "/map";
     }
 
     @GetMapping("/{id}/map")
-    public String map(@PathVariable Long id, Model model) {
+    public String map(@PathVariable("id") Long id, Model model) {
         model.addAttribute("map", fridgeService.getMap(id));
         model.addAttribute("fridgeId", id);
         return "fridges/map";
     }
 
     @GetMapping("/{id}/members")
-    public String members(@PathVariable Long id, Model model) {
+    public String members(@PathVariable("id") Long id, Model model) {
         model.addAttribute("members", fridgeService.listMembers(id));
         model.addAttribute("fridgeId", id);
         return "fridges/members";
     }
 
     @PostMapping("/{id}/members/{userId}/remove")
-    public String removeMember(@PathVariable Long id, @PathVariable Long userId) {
+    public String removeMember(@PathVariable("id") Long id, @PathVariable("userId") Long userId) {
         fridgeService.removeMember(id, userId);
         return "redirect:/fridges/" + id + "/members";
     }
 }
-

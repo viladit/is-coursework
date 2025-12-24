@@ -103,7 +103,7 @@ public class ProductWebController {
     }
 
     @GetMapping("/{id}")
-    public String detail(@AuthenticationPrincipal CustomUserDetails me, @PathVariable Long id, Model model) {
+    public String detail(@AuthenticationPrincipal CustomUserDetails me, @PathVariable("id") Long id, Model model) {
         model.addAttribute("p", productService.getProductDetail(me.getUserId(), id));
         model.addAttribute("moveForm", new MoveProductForm());
         model.addAttribute("extendForm", new ExtendProductForm());
@@ -112,7 +112,7 @@ public class ProductWebController {
     }
 
     @PostMapping("/{id}/move")
-    public String move(@AuthenticationPrincipal CustomUserDetails me, @PathVariable Long id,
+    public String move(@AuthenticationPrincipal CustomUserDetails me, @PathVariable("id") Long id,
                        @Valid @ModelAttribute("moveForm") MoveProductForm form, BindingResult br) {
         if (br.hasErrors()) return "redirect:/products/" + id;
         productService.move(me.getUserId(), id, form);
@@ -120,7 +120,7 @@ public class ProductWebController {
     }
 
     @PostMapping("/{id}/extend")
-    public String extend(@AuthenticationPrincipal CustomUserDetails me, @PathVariable Long id,
+    public String extend(@AuthenticationPrincipal CustomUserDetails me, @PathVariable("id") Long id,
                          @Valid @ModelAttribute("extendForm") ExtendProductForm form, BindingResult br) {
         if (br.hasErrors()) return "redirect:/products/" + id;
         productService.extend(me.getUserId(), id, form);
@@ -128,7 +128,7 @@ public class ProductWebController {
     }
 
     @PostMapping("/{id}/status")
-    public String status(@AuthenticationPrincipal CustomUserDetails me, @PathVariable Long id,
+    public String status(@AuthenticationPrincipal CustomUserDetails me, @PathVariable("id") Long id,
                          @Valid @ModelAttribute("statusForm") SetStatusForm form, BindingResult br) {
         if (br.hasErrors()) return "redirect:/products/" + id;
         productService.setStatus(me.getUserId(), id, form);
