@@ -44,6 +44,21 @@ CREATE TABLE IF NOT EXISTS users (
                                      blocked_at TIMESTAMPTZ
 )@@
 
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'users'
+          AND column_name = 'email'
+          AND data_type = 'bytea'
+    ) THEN
+        ALTER TABLE users
+            ALTER COLUMN email TYPE text
+            USING convert_from(email, 'UTF8');
+    END IF;
+END $$@@
+
 CREATE TABLE IF NOT EXISTS user_roles (
                                           user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
                                           role_id BIGINT NOT NULL REFERENCES roles(role_id) ON DELETE CASCADE,
