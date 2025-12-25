@@ -83,6 +83,31 @@ body {
     color: var(--accent);
 }
 
+.btn,
+.form-control,
+.form-select,
+.card {
+    border-radius: 14px;
+}
+
+.btn {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
 .badge {
     font-weight: 500;
 }
