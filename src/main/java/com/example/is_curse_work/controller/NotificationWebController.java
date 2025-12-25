@@ -15,9 +15,8 @@ public class NotificationWebController {
     }
 
     @PostMapping("/run")
-    public String run(@RequestParam Long fridgeId, @RequestParam int days) {
+    public String run(@RequestParam("fridgeId") Long fridgeId, @RequestParam("days") int days) {
         notificationService.runExpiryBatch(fridgeId, days);
         return "redirect:/dashboard";
     }
 }
-
