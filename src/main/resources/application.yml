@@ -1,0 +1,18 @@
+app:
+  mail:
+    enabled: false
+    from: "no-reply@example.com"
+    expiring-days: 3
+
+spring:
+  mail:
+    host: smtp.example.com
+    port: 587
+    username: user@example.com
+    password: password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

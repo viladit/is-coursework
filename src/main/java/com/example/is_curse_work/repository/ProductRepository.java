@@ -24,4 +24,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                               @Param("fridgeId") Long fridgeId);
 
     long countByStatus(String status);
+
+    @Query("""
+            select p from Product p
+            join fetch p.owner o
+            where p.expiresAt is not null
+              and p.expiresAt <= :cutoff
+              and p.status not in ('DISPOSED', 'TAKEN', 'EATEN')
+              and o.notifEmailOn = true
+            order by p.expiresAt asc
+            """)
+    List<Product> findExpiringForNotification(@Param("cutoff") java.time.OffsetDateTime cutoff);
 }

@@ -52,19 +52,20 @@ BEGIN
     INTO email_type
     FROM pg_attribute a
     JOIN pg_class c ON c.oid = a.attrelid
-    WHERE c.relname = 'users'
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relname = 'users'
       AND a.attname = 'email'
       AND a.attnum > 0
       AND NOT a.attisdropped;
 
     IF email_type = 'bytea' THEN
-        EXECUTE 'ALTER TABLE users ALTER COLUMN email TYPE text USING convert_from(email, ''UTF8'')';
+        EXECUTE 'ALTER TABLE public.users ALTER COLUMN email TYPE text USING convert_from(email, ''UTF8'')';
     ELSE
-        EXECUTE 'ALTER TABLE users ALTER COLUMN email TYPE text USING email::text';
+        EXECUTE 'ALTER TABLE public.users ALTER COLUMN email TYPE text USING email::text';
     END IF;
 EXCEPTION
     WHEN others THEN
-        -- Ignore if column already converted or conversion not needed
         NULL;
 END $$@@
 
