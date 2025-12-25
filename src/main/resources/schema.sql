@@ -159,6 +159,29 @@ CREATE TABLE IF NOT EXISTS audit_logs (
                                           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 )@@
 
+DO $$
+DECLARE
+    actor_type text;
+BEGIN
+    SELECT format_type(a.atttypid, a.atttypmod)
+    INTO actor_type
+    FROM pg_attribute a
+    JOIN pg_class c ON c.oid = a.attrelid
+    WHERE c.relname = 'audit_logs'
+      AND a.attname = 'actor_email'
+      AND a.attnum > 0
+      AND NOT a.attisdropped;
+
+    IF actor_type = 'bytea' THEN
+        EXECUTE 'ALTER TABLE audit_logs ALTER COLUMN actor_email TYPE text USING convert_from(actor_email, ''UTF8'')';
+    ELSE
+        EXECUTE 'ALTER TABLE audit_logs ALTER COLUMN actor_email TYPE text USING actor_email::text';
+    END IF;
+EXCEPTION
+    WHEN others THEN
+        NULL;
+END $$@@
+
 
 -- ======================= INDEXES ========================
 CREATE INDEX IF NOT EXISTS idx_products_expires_at ON products (expires_at)@@
