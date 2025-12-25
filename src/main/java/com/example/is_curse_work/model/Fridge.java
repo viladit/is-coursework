@@ -23,6 +23,9 @@ public class Fridge {
     @Column(name = "invite_required", nullable = false)
     private boolean inviteRequired = false;
 
+    @Column(name = "owner_id")
+    private Long ownerId;
+
     public Long getFridgeId() { return fridgeId; }
 
     public String getName() { return name; }
@@ -35,5 +38,7 @@ public class Fridge {
 
     public boolean isInviteRequired() { return inviteRequired; }
     public void setInviteRequired(boolean inviteRequired) { this.inviteRequired = inviteRequired; }
-}
 
+    public Long getOwnerId() { return ownerId; }
+    public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
+}
