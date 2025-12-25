@@ -44,6 +44,31 @@ CREATE TABLE IF NOT EXISTS users (
                                      blocked_at TIMESTAMPTZ
 )@@
 
+DO $$
+DECLARE
+    email_type text;
+BEGIN
+    SELECT format_type(a.atttypid, a.atttypmod)
+    INTO email_type
+    FROM pg_attribute a
+    JOIN pg_class c ON c.oid = a.attrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relname = 'users'
+      AND a.attname = 'email'
+      AND a.attnum > 0
+      AND NOT a.attisdropped;
+
+    IF email_type = 'bytea' THEN
+        EXECUTE 'ALTER TABLE public.users ALTER COLUMN email TYPE text USING convert_from(email, ''UTF8'')';
+    ELSE
+        EXECUTE 'ALTER TABLE public.users ALTER COLUMN email TYPE text USING email::text';
+    END IF;
+EXCEPTION
+    WHEN others THEN
+        NULL;
+END $$@@
+
 CREATE TABLE IF NOT EXISTS user_roles (
                                           user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
                                           role_id BIGINT NOT NULL REFERENCES roles(role_id) ON DELETE CASCADE,
@@ -55,8 +80,12 @@ CREATE TABLE IF NOT EXISTS fridges (
                                        name TEXT NOT NULL,
                                        location TEXT,
                                        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-                                       invite_required BOOLEAN NOT NULL DEFAULT FALSE
+                                       invite_required BOOLEAN NOT NULL DEFAULT FALSE,
+                                       owner_id BIGINT REFERENCES users(user_id) ON DELETE SET NULL
 )@@
+
+ALTER TABLE fridges
+    ADD COLUMN IF NOT EXISTS owner_id BIGINT REFERENCES users(user_id) ON DELETE SET NULL@@
 
 CREATE TABLE IF NOT EXISTS fridge_memberships (
                                                   fridge_id BIGINT NOT NULL REFERENCES fridges(fridge_id) ON DELETE CASCADE,
@@ -121,6 +150,39 @@ CREATE TABLE IF NOT EXISTS notifications (
                                              error_msg TEXT
 )@@
 
+CREATE TABLE IF NOT EXISTS audit_logs (
+                                          audit_id BIGSERIAL PRIMARY KEY,
+                                          actor_email TEXT,
+                                          action TEXT NOT NULL,
+                                          entity_type TEXT NOT NULL,
+                                          entity_id TEXT,
+                                          details TEXT,
+                                          created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+)@@
+
+DO $$
+DECLARE
+    actor_type text;
+BEGIN
+    SELECT format_type(a.atttypid, a.atttypmod)
+    INTO actor_type
+    FROM pg_attribute a
+    JOIN pg_class c ON c.oid = a.attrelid
+    WHERE c.relname = 'audit_logs'
+      AND a.attname = 'actor_email'
+      AND a.attnum > 0
+      AND NOT a.attisdropped;
+
+    IF actor_type = 'bytea' THEN
+        EXECUTE 'ALTER TABLE audit_logs ALTER COLUMN actor_email TYPE text USING convert_from(actor_email, ''UTF8'')';
+    ELSE
+        EXECUTE 'ALTER TABLE audit_logs ALTER COLUMN actor_email TYPE text USING actor_email::text';
+    END IF;
+EXCEPTION
+    WHEN others THEN
+        NULL;
+END $$@@
+
 
 -- ======================= INDEXES ========================
 CREATE INDEX IF NOT EXISTS idx_products_expires_at ON products (expires_at)@@
@@ -131,6 +193,7 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_sentat ON notifications (user_
 CREATE INDEX IF NOT EXISTS idx_product_history_product_created_at ON product_history (product_id, created_at DESC)@@
 CREATE INDEX IF NOT EXISTS idx_zones_fridge ON zones(fridge_id)@@
 CREATE INDEX IF NOT EXISTS idx_fridge_memberships_user ON fridge_memberships(user_id)@@
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at)@@
 
 
 -- ======================= TRIGGERS ========================

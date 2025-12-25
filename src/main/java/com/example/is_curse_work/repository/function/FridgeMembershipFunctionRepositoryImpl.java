@@ -14,11 +14,11 @@ public class FridgeMembershipFunctionRepositoryImpl implements FridgeMembershipF
 
     @Override
     public void addMember(Long fridgeId, Long userId, boolean moderator) {
-        jdbc.update("select fn_add_fridge_member(?, ?, ?)", fridgeId, userId, moderator);
+        jdbc.queryForObject("select fn_add_fridge_member(?, ?, ?)", Object.class, fridgeId, userId, moderator);
     }
 
     @Override
     public void removeMember(Long fridgeId, Long userId) {
-        jdbc.update("select fn_remove_fridge_member(?, ?)", fridgeId, userId);
+        jdbc.queryForObject("select fn_remove_fridge_member(?, ?)", Object.class, fridgeId, userId);
     }
 }
