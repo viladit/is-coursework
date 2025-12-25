@@ -45,18 +45,27 @@ CREATE TABLE IF NOT EXISTS users (
 )@@
 
 DO $$
+DECLARE
+    email_type text;
 BEGIN
-    IF EXISTS (
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_name = 'users'
-          AND column_name = 'email'
-          AND data_type = 'bytea'
-    ) THEN
-        ALTER TABLE users
-            ALTER COLUMN email TYPE text
-            USING convert_from(email, 'UTF8');
+    SELECT format_type(a.atttypid, a.atttypmod)
+    INTO email_type
+    FROM pg_attribute a
+    JOIN pg_class c ON c.oid = a.attrelid
+    WHERE c.relname = 'users'
+      AND a.attname = 'email'
+      AND a.attnum > 0
+      AND NOT a.attisdropped;
+
+    IF email_type = 'bytea' THEN
+        EXECUTE 'ALTER TABLE users ALTER COLUMN email TYPE text USING convert_from(email, ''UTF8'')';
+    ELSE
+        EXECUTE 'ALTER TABLE users ALTER COLUMN email TYPE text USING email::text';
     END IF;
+EXCEPTION
+    WHEN others THEN
+        -- Ignore if column already converted or conversion not needed
+        NULL;
 END $$@@
 
 CREATE TABLE IF NOT EXISTS user_roles (
