@@ -1,6 +1,7 @@
 package com.example.is_curse_work.controller.admin;
 
 import com.example.is_curse_work.repository.AuditLogRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +21,12 @@ public class AdminAuditController {
     public String list(@RequestParam(name = "actor", required = false) String actor,
                        @RequestParam(name = "action", required = false) String action,
                        Model model) {
-        model.addAttribute("logs", auditLogs.search(blankToNull(actor), blankToNull(action), PageRequest.of(0, 100)));
+        try {
+            model.addAttribute("logs", auditLogs.search(blankToNull(actor), blankToNull(action), PageRequest.of(0, 100)));
+        } catch (DataAccessException ex) {
+            model.addAttribute("logs", java.util.List.of());
+            model.addAttribute("error", "Audit log unavailable: " + ex.getMostSpecificCause().getMessage());
+        }
         model.addAttribute("actor", actor);
         model.addAttribute("action", action);
         return "admin/audit";
