@@ -37,7 +37,7 @@ public class AdminUsersController {
     public String block(@AuthenticationPrincipal CustomUserDetails actor,
                         @PathVariable("id") Long id,
                         RedirectAttributes redirectAttributes) {
-        var user = users.findById(id).orElse(null);
+        var user = users.findByIdWithRoles(id).orElse(null);
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
             return "redirect:/admin/users";
@@ -52,7 +52,7 @@ public class AdminUsersController {
     public String unblock(@AuthenticationPrincipal CustomUserDetails actor,
                           @PathVariable("id") Long id,
                           RedirectAttributes redirectAttributes) {
-        var user = users.findById(id).orElse(null);
+        var user = users.findByIdWithRoles(id).orElse(null);
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
             return "redirect:/admin/users";
@@ -68,7 +68,7 @@ public class AdminUsersController {
                             @PathVariable("id") Long id,
                             @PathVariable("code") String code,
                             RedirectAttributes redirectAttributes) {
-        var user = users.findById(id).orElse(null);
+        var user = users.findByIdWithRoles(id).orElse(null);
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
             return "redirect:/admin/users";
@@ -89,7 +89,7 @@ public class AdminUsersController {
                              @PathVariable("id") Long id,
                              @PathVariable("code") String code,
                              RedirectAttributes redirectAttributes) {
-        var user = users.findById(id).orElse(null);
+        var user = users.findByIdWithRoles(id).orElse(null);
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
             return "redirect:/admin/users";

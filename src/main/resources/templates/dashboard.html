@@ -158,22 +158,6 @@
                         </li>
                     </ul>
 
-                    <hr/>
-
-                    <form th:action="@{/notifications/run}" method="post" class="row g-2">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <div class="col-6">
-                            <input class="form-control form-control-sm" name="fridgeId" placeholder="fridgeId" value="1">
-                        </div>
-                        <div class="col-3">
-                            <input class="form-control form-control-sm" name="days" placeholder="days" value="3">
-                        </div>
-                        <div class="col-3">
-                            <button class="btn btn-sm btn-warning w-100" type="submit">Batch</button>
-                        </div>
-                        <div class="text-muted small">Ручной запуск проверки уведомлений (для демо)</div>
-                    </form>
-
                 </div>
             </div>
         </div>
